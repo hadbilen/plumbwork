@@ -9,7 +9,7 @@ from __future__ import annotations
 import importlib
 from typing import TYPE_CHECKING, Any
 
-__version__ = "3.0.1"
+__version__ = "3.0.2"
 __author__ = "Plumbwork Contributors"
 
 if TYPE_CHECKING:

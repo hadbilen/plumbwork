@@ -1828,6 +1828,100 @@ def cmd_test_boundary(args: argparse.Namespace) -> int:
         success, msg, codes = guard.run_reproducible(command=args.cmd, passes=passes)
         print(f"[{'PASS' if success else 'FAIL'}] {msg} (Exit Codes: {codes})")
         return 0 if success else 1
+
+    if action.startswith("ledger-"):
+        from guard.property_ledger import LedgerError, PropertyLedger
+
+        ws = Path(args.dir).resolve() if getattr(args, "dir", None) else Path.cwd().resolve()
+        ledger = PropertyLedger(root=ws)
+        as_json = bool(getattr(args, "json", False))
+        try:
+            if action == "ledger-add":
+                row = ledger.add_row(
+                    row_id=getattr(args, "id", "") or "",
+                    kind=getattr(args, "kind", "") or "",
+                    prop=getattr(args, "property", "") or "",
+                    covers_raw=getattr(args, "covers", "") or "",
+                    command=getattr(args, "cmd", "") or "",
+                    level=getattr(args, "level", "") or "",
+                    allow_shell=bool(getattr(args, "allow_shell", False)),
+                )
+                if as_json:
+                    print(json.dumps(row, indent=2))
+                else:
+                    print(f"[PROPERTY-LEDGER] Added {row['id']} ({row['kind']}, {row['level']}) hash={row['covers_hash']} -> {ledger.ledger_path}")
+                return 0
+
+            if action == "ledger-waive":
+                added = ledger.waive_paths(
+                    covers_raw=getattr(args, "covers", "") or "",
+                    why=getattr(args, "why", "") or "",
+                )
+                if as_json:
+                    print(json.dumps({"waived": added}, indent=2))
+                else:
+                    print(f"[PROPERTY-LEDGER] Waived {len(added)} path(s) in {ledger.ledger_path}")
+                return 0
+
+            if action == "ledger-run":
+                outcomes = ledger.run_rows(
+                    row_id=getattr(args, "id", None),
+                    timeout=int(getattr(args, "timeout", 120)),
+                    allow_shell=bool(getattr(args, "allow_shell", False)),
+                )
+                if as_json:
+                    print(json.dumps([o.__dict__ for o in outcomes], indent=2))
+                else:
+                    for o in outcomes:
+                        tag = "PASS" if o.passed else ("TIMEOUT" if o.timed_out else "FAIL")
+                        print(f"[{tag}] {o.id} state={o.state} rc={o.returncode} hash={o.ran_hash}")
+                        if not o.passed:
+                            tail = (o.stderr_tail or o.stdout_tail).strip()
+                            if tail:
+                                print(f"  {tail.splitlines()[-1][:200]}")
+                return 0 if all(o.passed for o in outcomes) else 1
+
+            if action == "ledger-sync":
+                ok, msg, ev = ledger.sync_row(
+                    row_id=getattr(args, "id", "") or "",
+                    note=getattr(args, "note", "") or "",
+                )
+                if as_json:
+                    print(json.dumps({"ok": ok, "message": msg, "row": ev.__dict__ if ev else None}, indent=2))
+                else:
+                    print(f"[{'SYNC' if ok else 'BLOCKED'}] {msg}")
+                return 0 if ok else 1
+
+            if action == "ledger-status":
+                if getattr(args, "allow_missing", False) and not ledger.exists():
+                    if as_json:
+                        print(json.dumps({"ok": True, "missing": True, "ledger": str(ledger.ledger_path)}, indent=2))
+                    else:
+                        print(f"[PROPERTY-LEDGER] No ledger present at {ledger.ledger_path} (--allow-missing).")
+                    return 0
+                report = ledger.status_report(file_filter=getattr(args, "file", None))
+                if as_json:
+                    print(json.dumps(report, indent=2))
+                else:
+                    if report["total"] == 0:
+                        msg = (
+                            f"[PROPERTY-LEDGER] NO RULE covering {report['file_filter']}"
+                            if report["file_filter"]
+                            else "[PROPERTY-LEDGER] Ledger has 0 rows."
+                        )
+                        print(msg)
+                    else:
+                        for row in report["rows"]:
+                            detail = f" — {row['reason']}" if row["reason"] else ""
+                            print(f"{row['state']:10s} {row['id']} ({row['kind']}){detail}")
+                return 0 if report["ok"] else 1
+        except (LedgerError, OSError) as exc:
+            if as_json:
+                print(json.dumps({"ok": False, "error": str(exc)}, indent=2))
+            else:
+                print(f"Error: {exc}", file=sys.stderr)
+            return 2
+
     return 0
 
 
@@ -2446,16 +2540,41 @@ def build_parser() -> argparse.ArgumentParser:
     env_opts(p)
     p.set_defaults(func=cmd_doctor)
 
-    p = subparsers.add_parser("test-boundary", help="Guard tests and runner configs as a trust boundary")
-    p.add_argument("action", choices=["snapshot", "verify", "run-reproducible"], help="Test boundary action")
+    p = subparsers.add_parser("test-boundary", help="Guard tests, runner configs, and property ledger as a trust boundary")
+    p.add_argument(
+        "action",
+        choices=[
+            "snapshot",
+            "verify",
+            "run-reproducible",
+            "ledger-add",
+            "ledger-run",
+            "ledger-sync",
+            "ledger-status",
+            "ledger-waive",
+        ],
+        help="Test boundary or property-ledger action",
+    )
     p.add_argument("--mode", choices=["bugfix", "tdd"], default="bugfix", help="Verification mode (default: bugfix)")
     p.add_argument("--dir", help="Target workspace root directory")
     p.add_argument("--output", help="Snapshot output path")
     p.add_argument("--snapshot", help="Custom snapshot path to verify against")
     p.add_argument("--base-ref", help="Verify against a git ref (e.g. origin/main) instead of a stored snapshot")
     p.add_argument("--authorize", action="append", default=[], help="Relative test path authorized for contract modification (repeatable)")
-    p.add_argument("--cmd", help="Target test command for run-reproducible")
+    p.add_argument("--cmd", help="Target test command for run-reproducible or property command for ledger-add")
     p.add_argument("--passes", type=int, default=2, help="Consecutive passes required (>= 2, default: 2)")
+    p.add_argument("--id", help="Property id for ledger-add/ledger-run/ledger-sync")
+    p.add_argument("--kind", choices=["state", "transition", "precondition", "postcondition", "invariant", "liveness"], help="Property kind for ledger-add")
+    p.add_argument("--property", help="Plain-sentence behavioral property for ledger-add")
+    p.add_argument("--covers", help="Comma-separated repo-relative files covered by ledger-add/ledger-waive")
+    p.add_argument("--level", choices=["exhaustive", "bounded", "sampled"], help="Verification level for ledger-add")
+    p.add_argument("--why", help="Waiver rationale for ledger-waive (>= 12 chars)")
+    p.add_argument("--note", help="Sync verification note for ledger-sync (>= 8 chars)")
+    p.add_argument("--timeout", type=int, default=120, help="Per-row timeout in seconds for ledger-run (1..3600)")
+    p.add_argument("--allow-shell", action="store_true", help="Explicitly permit shell operators in ledger-add/ledger-run")
+    p.add_argument("--allow-missing", action="store_true", help="Exit 0 in ledger-status when verify/ledger.tsv does not exist")
+    p.add_argument("--file", help="Filter ledger-status to rows covering this repo-relative path")
+    p.add_argument("--json", action="store_true", help="Emit JSON output for ledger-* actions")
     p.set_defaults(func=cmd_test_boundary)
 
     p = subparsers.add_parser("provenance", help="Generate and inspect the execution provenance manifest")
@@ -2552,7 +2671,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         return 0
 
     try:
-        if args.command not in ("lease-tick", "gui", "notify", *_PORTABLE_TOOLS):
+        is_project_ledger = args.command == "test-boundary" and str(getattr(args, "action", "")).startswith("ledger-")
+        if args.command not in ("lease-tick", "gui", "notify", *_PORTABLE_TOOLS) and not is_project_ledger:
             try:
                 LeaseManager(registry=_registry(args)).check_and_expire_leases()
             except Exception as e:  # never let lease housekeeping block the requested command

@@ -19,3 +19,4 @@
 | [0015](0015-external-audit-hardening-host-contract-parity-and-measurement.md) | External Audit Hardening, Antigravity Host-Contract Parity, Ergonomics, Surface Governance, and Real-Project Quality Measurement | accepted | 2026-11-23 |
 | [0016](0016-hybrid-modular-plugin-architecture.md) | Hybrid Modular Plugin Architecture, Standalone Domain Packs, and Opt-In OS-Locked Deployment | accepted | 2026-11-23 |
 | [0017](0017-plumbwork-rebrand-and-ui-refinery-separation.md) | Plumbwork Clean Major Cutover (`v3.0.0`), UI Refinery & Motion Physics Separation, and Maintenance Diagnostics | accepted | 2026-11-24 |
+| [0018](0018-property-ledger-ui-matrix-blind-benchmark-and-100x-tracking.md) | Property Ledger with Planted-Bug Red Proofs, Optional Playwright UI Matrix, Blind A/B Benchmark Evaluator, and `100x-engineer-skill` Release Tracking | accepted | 2026-11-28 |

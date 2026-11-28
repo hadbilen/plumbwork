@@ -11,7 +11,7 @@ Deterministically verifies codebase modifications against fundamental invariants
 
 Usage:
   python3 scripts/verify_invariants.py [--diff | --all | --path <dir>] [--base-ref REF]
-                                       [--test-boundary [--mode bugfix|tdd]] [--authorize PATH]
+                                       [--test-boundary [--mode bugfix|tdd]] [--property-ledger] [--authorize PATH]
 
 Exit codes: 0 pass, 1 violations, 2 the check itself could not run (never reported as PASS).
 """
@@ -523,6 +523,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("--diff", action="store_true", help="Inspect git diff")
     parser.add_argument("--all", action="store_true", help="Inspect entire repository tree")
     parser.add_argument("--test-boundary", action="store_true", help="Explicitly verify test & config trust boundary")
+    parser.add_argument("--property-ledger", action="store_true", help="Verify git-tracked verify/ledger.tsv without executing row commands")
     parser.add_argument(
         "--mode",
         choices=["bugfix", "tdd"],
@@ -541,8 +542,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     violations = []
     inspected_ref = ""
+    standalone_ledger_only = bool(
+        args.property_ledger and not (args.all or args.diff or args.test_boundary or args.base_ref)
+    )
     try:
-        if args.all:
+        if standalone_ledger_only:
+            print(f"[MODE] Property Ledger Verification: {base_path}")
+        elif args.all:
             print(f"[MODE] Full Repository Scan: {base_path}")
             violations = scan_directory(base_path)
         else:
@@ -553,7 +559,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return 2
 
     explicit_boundary = bool(args.test_boundary or args.base_ref)
-    run_default_diff_boundary = (not args.all) and (not explicit_boundary)
+    run_default_diff_boundary = (not args.all) and (not explicit_boundary) and (not standalone_ledger_only)
     boundary_verified = False
 
     if explicit_boundary or run_default_diff_boundary:
@@ -599,13 +605,50 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             print(f"\n[ERROR] Test boundary check could not run: {e}")
             return 2
 
+    if args.property_ledger:
+        if str(REPO_ROOT) not in sys.path:
+            sys.path.insert(0, str(REPO_ROOT))
+        try:
+            from guard.property_ledger import PropertyLedger
+
+            ledger = PropertyLedger(root=base_path)
+            if not ledger.exists():
+                print(f"\n[ERROR] Property ledger unavailable: {ledger.ledger_path} does not exist.")
+                return 2
+            l_report = ledger.status_report()
+            print(
+                f"[PROPERTY-LEDGER] {l_report['total']} row(s) — "
+                f"holds={l_report['counts']['holds']}, waived={l_report['counts']['waived']}, "
+                f"stale={l_report['counts']['stale']}, broken={l_report['counts']['broken']}, "
+                f"unproven={l_report['counts']['unproven']}, unchecked={l_report['counts']['unchecked']}"
+            )
+            if l_report["total"] == 0:
+                violations.append(("verify/ledger.tsv", "0 rows", "Property ledger is empty."))
+            else:
+                for row in l_report["rows"]:
+                    if row["state"] not in ("holds", "waived"):
+                        violations.append(
+                            (
+                                f"verify/ledger.tsv:{row['id']}",
+                                f"{row['state']} ({row['kind']})",
+                                row["reason"] or f"Property row is {row['state']}.",
+                            )
+                        )
+        except Exception as e:
+            print(f"\n[ERROR] Property ledger check could not run: {e}")
+            return 2
+
     if not violations:
-        print("\n✅ [PASS] All deterministic invariants satisfied.")
-        if boundary_verified:
-            print("   - Zero test weakening, skip, or unauthorized expectation mutations detected (TestBoundaryGuard verified).")
+        if standalone_ledger_only:
+            print("\n✅ [PASS] Property ledger verified (read-only; zero ledger commands executed).")
+            print("   - Static diff/tree invariant scan and TestBoundaryGuard were skipped in --property-ledger-only mode.")
         else:
-            print("   - Static scan clean (skip markers, commented assertions, C9, supply-chain); run with --diff or --test-boundary to check test expectation mutations against a baseline.")
-        print("   - Zero conversational sycophancy or supply-chain violations.")
+            print("\n✅ [PASS] All deterministic invariants satisfied.")
+            if boundary_verified:
+                print("   - Zero test weakening, skip, or unauthorized expectation mutations detected (TestBoundaryGuard verified).")
+            else:
+                print("   - Static scan clean (skip markers, commented assertions, C9, supply-chain); run with --diff or --test-boundary to check test expectation mutations against a baseline.")
+            print("   - Zero conversational sycophancy or supply-chain violations.")
         print("=" * 64)
         return 0
 

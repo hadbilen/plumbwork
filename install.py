@@ -89,6 +89,7 @@ RUNTIME_ENTRIES = ["guard", "porter", "scripts", "guard.py", "porter.py"]
 RUNTIME_PORTABLE_SKILL_SCRIPTS = (
     "skills/ui-refinery/scripts/check_ui_slop.py",
     "skills/ui-refinery/scripts/check_synthetic_markers.py",
+    "skills/ui-refinery/scripts/check_ui_matrix.py",
 )
 LAUNCHER_MARKER = "plumbwork launcher"
 RELEASE_BASE = "https://github.com/tozhax/plumbwork/releases/download"

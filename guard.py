@@ -20,7 +20,7 @@ Usage:
   python3 guard.py snapshot create|list|restore|prune  # Governance snapshots
   python3 guard.py porter inspect|stage <path/url>     # Porter inspection and staging gate
   python3 guard.py upstream [check|status|ack] [--offline] # Tracked upstream repositories
-  python3 guard.py test-boundary snapshot|verify|run-reproducible  # Test trust boundary
+  python3 guard.py test-boundary snapshot|verify|run-reproducible|ledger-add|ledger-run|ledger-sync|ledger-status|ledger-waive  # Test trust boundary & property ledger
   python3 guard.py provenance generate|status # Execution provenance manifest
   python3 guard.py startup enable|disable|status # Boot sentinel registration
   python3 guard.py boot-check                 # Headless boot verification and lock

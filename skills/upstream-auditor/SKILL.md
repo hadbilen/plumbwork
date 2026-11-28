@@ -18,7 +18,7 @@ A specialized maintenance and audit skill designed to bridge the gap between ups
 As model capabilities advance, platforms evolve, and external open-source skills update, uncurated prompt directives and uninspected external changes introduce **scaffolding debt, context bloat, and constitutional drift**.
 
 The mandate of this skill is to:
-1. Detect changes across the active model, Antigravity runtime, and the 8 tracked community repositories.
+1. Detect changes across the active model, Antigravity runtime, and the 9 tracked community repositories.
 2. Filter incoming changes through the global constitution and the `ui-refinery` design/copy quality contract.
 3. Present the user with a transparent, reviewable, and minimal synchronization diff.
 
@@ -29,7 +29,7 @@ The mandate of this skill is to:
 Refine the audit scope using targeted flags:
 
 * **Full Audit:** `/audit-upstream` or `/audit-upstream --all`
-  * Audits model drift, runtime platform, and all 8 external skill and plugin repositories across a 3-tier inspection matrix.
+  * Audits model drift, runtime platform, and all 9 external skill and plugin repositories across a 3-tier inspection matrix.
 * **External Skills Only:** `/audit-upstream --skills`
   * Audits only git commit heads and release tags in `upstream_state.json` against local installed skills and plugins.
 * **Targeted Single Skill:** `/audit-upstream --skill <skill_name>`
@@ -39,7 +39,7 @@ Refine the audit scope using targeted flags:
 * **Platform Only:** `/audit-upstream --platform`
   * Audits the Antigravity builtin environment (`builtin/skills`, `builtin/.checksum` covering bundled plugins/sidecars such as `builtin/plugins/swarm`) and lifecycle hooks.
 * **Proactive 72-Hour Watchdog & Instant Model/Platform Drift Hook (Two-Stage Trigger):**
-  * **Stage 1 (Deterministic `SessionStart` Detection):** The lightweight hook (`~/.gemini/config/skills/upstream-auditor/scripts/upstream_watcher.py` / `~/.gemini/config/skills/upstream-auditor/scripts/check_skills.sh`, installed under `~/.gemini/config/skills/upstream-auditor/scripts/` and registered on `SessionStart` with backward-compatible `PreInvocation` `invocationNum == 1` support) inspects active model family/version changes (`modelName` and `antigravity_state.pbtxt`), `builtin/skills` SHA-256 content hashes, `~/.gemini/antigravity/builtin/.checksum` (`builtin_bundle_checksum`, degrading cleanly when absent so plugin/sidecar updates under `builtin/plugins/` surface even when `builtin/skills` is unchanged), and local/builtin skill namespace collisions once per new conversation session with zero per-turn LLM overhead, and queries commit hashes and release tags for the 8 tracked repositories when 72 hours (3 days) have elapsed since the prior check.
+  * **Stage 1 (Deterministic `SessionStart` Detection):** The lightweight hook (`~/.gemini/config/skills/upstream-auditor/scripts/upstream_watcher.py` / `~/.gemini/config/skills/upstream-auditor/scripts/check_skills.sh`, installed under `~/.gemini/config/skills/upstream-auditor/scripts/` and registered on `SessionStart` with backward-compatible `PreInvocation` `invocationNum == 1` support) inspects active model family/version changes (`modelName` and `antigravity_state.pbtxt`), `builtin/skills` SHA-256 content hashes, `~/.gemini/antigravity/builtin/.checksum` (`builtin_bundle_checksum`, degrading cleanly when absent so plugin/sidecar updates under `builtin/plugins/` surface even when `builtin/skills` is unchanged), and local/builtin skill namespace collisions once per new conversation session with zero per-turn LLM overhead, and queries commit hashes and release tags for the 9 tracked repositories when 72 hours (3 days) have elapsed since the prior check.
   * **Stage 2 (First-Seen Operator Alert, `metadata.user_markdown`):** When a new unacknowledged drift signature is first detected (`first_time_seen`), the hook spawns a desktop notification (`plumb-guard notify send`) and displays a one-time operator-only notice in the UI (`systemMessage: ""` for the model, with the formatted `Upstream Notice:` banner in `metadata.user_markdown`) at session start. To avoid delaying the user's active task, full multi-stage analysis never runs automatically inside a task turn; the notice stays strictly operator-facing and never instructs the agent to repeat or copy maintenance notices into responses, task prompts, plans, next-step blocks, or `HANDOFF.md` (`GEMINI.md` Rule 5), pointing only the human operator to `/audit-upstream` (`--model`, `--platform`, `--skills`, or `--all`).
 
 ---
@@ -48,7 +48,7 @@ Refine the audit scope using targeted flags:
 
 ```mermaid
 flowchart LR
-    P1["1. Upstream Ingestion<br/>(Model, Runtime & 8 Repos)"] --> P2["2. Local Inventory & Constitution<br/>(GEMINI.md, ui-refinery)"]
+    P1["1. Upstream Ingestion<br/>(Model, Runtime & 9 Repos)"] --> P2["2. Local Inventory & Constitution<br/>(GEMINI.md, ui-refinery)"]
     P2 --> P3["3. Cross-Matrix Analysis<br/>(Pruning, Drift, Opportunities)"]
     P3 --> P4["4. Staging RFC & Synchronization<br/>(Diff & upstream_state.seed.json Update)"]
 ```
@@ -63,7 +63,7 @@ flowchart LR
    * Inspect builtin skills under `~/.gemini/antigravity/builtin/skills/` and the top-level bundle fingerprint `~/.gemini/antigravity/builtin/.checksum` (which tracks bundled plugins/sidecars such as `builtin/plugins/swarm/` alongside `builtin/skills/`).
    * Detect new builtin capabilities, updated bundled plugins, updated lifecycle hooks, or modified runtime tools.
 3. **External Community Ecosystem (`--skills`, `--skill <name>`, or `--all`):**
-   * Query the 8 tracked repositories in `upstream_state.json` via GitHub API (`commits` with optional `path` filter, or `releases/latest` when `"track": "release"` is set):
+   * Query the 9 tracked repositories in `upstream_state.json` via GitHub API (`commits` with optional `path` filter, or `releases/latest` when `"track": "release"` is set):
      * `miqdadbadjuber/anti-slop` $\rightarrow$ `ui-refinery` (`~/.gemini/config/skills/ui-refinery/references/{code-comments,ui,human-a11y,copywriting,layoutmobile}.md`)
      * `JayPokale/Chisle` $\rightarrow$ `chisle`
      * `Leonxlnx/unlazy` $\rightarrow$ `harness` (`~/.gemini/config/skills/harness/references/unlazy.md`)
@@ -72,6 +72,7 @@ flowchart LR
      * `mattpocock/skills` $\rightarrow$ `grill-me` (locally `deep-grill`), `diagnosing-bugs`, `harness` (`~/.gemini/config/skills/harness/references/test-design.md`), `retro`
      * `morluto/rea` (`track: "release"`) $\rightarrow$ `reverse-engineer-anything` (`plugins/rea` & `rea-agents` Model Context Protocol (MCP) server)
      * `erkamyaman/rust-anything` (`track: "release"`) $\rightarrow$ `rustify`, `rust-harden`
+     * `DeadInternetStudios/100x-engineer-skill` (`track: "release"`) $\rightarrow$ `harness` (`~/.gemini/config/skills/harness/references/test-design.md`, `~/.gemini/config/skills/harness/references/multi-agent-orchestration.md`), `ui-refinery` (`~/.gemini/config/skills/ui-refinery/scripts/check_ui_matrix.py`)
    * Fetch diff between recorded `last_synced_commit` (SHA or release tag) and current remote HEAD or release tag.
 4. **Community Signal Scan (`--all`, via isolated `research` subagent):**
    * Dispatch the `research` subagent (`invoke_subagent`) to scan high-signal engineering discussions (`r/ClaudeAI`, `r/cursor`, `r/LocalLLaMA`, Hacker News) and empirical skill registries (`skills.sh`, `skillleaderboard`) using `search_web` (plus parent-fetched `.json` feeds via `~/.local/share/plumbwork/runtime/porter/net.py` `safe_fetch_url` where needed) without polluting primary session context (`GEMINI.md` Rule 11).

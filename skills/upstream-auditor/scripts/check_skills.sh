@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # check_skills.sh — Upstream Auditor 72h Lightweight CLI Tracker
-# Checks GitHub HEAD commits and release tags for 8 tracked community skills without LLM overhead.
+# Checks GitHub HEAD commits and release tags for 9 tracked community skills without LLM overhead.
 #
 
 set -e

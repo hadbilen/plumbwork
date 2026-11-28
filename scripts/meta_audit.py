@@ -1474,7 +1474,7 @@ class MetaAuditEngine:
         r"agents/[a-z0-9][a-z0-9_-]*\.md|"
         r"porter/[A-Za-z0-9_./-]+\.py|"
         r"guard/(?:agy_hooks\.py|hooks/[A-Za-z0-9_.-]+\.py|[a-z_]+\.py)|"
-        r"scripts/(?:meta_audit|code_map|verify_invariants|check_ui_slop|check_synthetic_markers|contrast-check|contrast-mcp|media_qc|upstream_watcher)\.(?:py|sh)"
+        r"scripts/(?:meta_audit|code_map|verify_invariants|benchmark_eval|check_ui_slop|check_ui_matrix|check_synthetic_markers|contrast-check|contrast-mcp|media_qc|upstream_watcher)\.(?:py|sh)"
         r")"
     )
 

@@ -131,6 +131,31 @@ PY
 * **Retain a harness rule or hook** when Condition B (`ON`) improves `acceptance_pass`, `rule9_intact`, or reduces `auditor_confirmed_defects` / `user_corrections` across paired runs with acceptable overhead (`<= +25%` paired median tokens on Tier 1/2 tasks; Tier 3 tasks `BM-10` report token/wall-clock delta separately because mandatory auditor fan-out scales with diff size).
 * **Condense or prune a scaffolding clause** (via `skills/upstream-auditor/references/model-calibration-matrix.md` `MC-01`..`MC-06`) when Condition A (`OFF`) already achieves `100%` pass and `0` defects across `>= 3` paired runs on the target dimension while Condition B adds `> +15%` median token or wall-clock cost without quality gain.
 
+### Automated Blinded Pair Builder, Leak Scan & Exact Sign-Test CLI (`scripts/benchmark_eval.py`)
+
+For repeatable blinded judging alongside `benchmark_runs.jsonl`, run the stdlib repository evaluator `scripts/benchmark_eval.py` (adapted in protocol design from `DeadInternetStudios/100x-engineer-skill`, MIT):
+
+```bash
+# 1. Initialize campaign with deterministic seed, protocol hash, and private HMAC audit key
+python3 scripts/benchmark_eval.py init --out /tmp/plumbwork-bench --seed 42 \
+  --protocol docs/benchmark-protocol.md --builder-model "Gemini 4 Neon (XHigh)"
+
+# 2. Pair OFF vs ON artifacts into mirrored judge/pair-BM-01-o1 and judge/pair-BM-01-o2 folders
+#    (normalizes single-file names, strips tasks.md/HANDOFF.md/walkthrough.md/MISTAKES.md,
+#    runs path+byte leak scan, and writes distinct per-order HMAC tokens into judge/pair-BM-01-{o1,o2}/ask.md;
+#    seed and builder_model remain sealed inside 0o600 .private/key.json)
+python3 scripts/benchmark_eval.py pair --campaign /tmp/plumbwork-bench --task BM-01 \
+  --off /tmp/patch_off.diff --on /tmp/patch_on.diff
+
+# 3. Score ledger metrics and blinded verdicts (exact two-sided binomial sign test + Wilson 95% CI,
+#    order-flip filtering, HMAC seal verification, and same-family self_review detection)
+python3 scripts/benchmark_eval.py score --ledger /tmp/benchmark_runs.jsonl \
+  --campaign /tmp/plumbwork-bench --require-cross-model --json
+```
+
+* **Verdict Rule:** `score` prints `verdict: "ahead"` only when `.private/key.seal` passes HMAC verification, `0` pairs are incomplete or unsealed, `0` verdict rationales leak harness/arm markers, `decisive >= 6` (both mirrored `o1` and `o2` orders agree; ties and order flips are excluded), `on_wins > off_wins`, and the exact two-sided sign test reaches `p < 0.05` (plus distinct builder vs. judge model families when `--require-cross-model` is set).
+* **Local Seal Limit (`GEMINI.md` Rule 8):** `.private/audit.key` resides on the evaluation host (`0o600`, outside `judge/`). It detects accidental drift and unsealed hand-typed verdicts, not a local process that deliberately reads `.private/audit.key`.
+
 ---
 
 ## Part 2: PreInvocation Skill-Hint Precision & Dead-Pattern Evaluation Record (`W3 / 5.8`)

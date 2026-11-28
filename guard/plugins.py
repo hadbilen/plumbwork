@@ -147,7 +147,11 @@ PLUGIN_CATALOG: Dict[str, PluginSpec] = {
         extra_files=(("DESIGN.md", "skills/ui-refinery/references/DESIGN.md"),),
         mcp_server_name="contrast",
         mcp_script_rel="skills/ui-refinery/scripts/contrast-mcp.py",
-        third_party_upstreams=("miqdadbadjuber/anti-slop", "bendrape1-byte/silk-design"),
+        third_party_upstreams=(
+            "miqdadbadjuber/anti-slop",
+            "bendrape1-byte/silk-design",
+            "DeadInternetStudios/100x-engineer-skill",
+        ),
     ),
     "rust-suite": PluginSpec(
         name="rust-suite",
@@ -698,6 +702,11 @@ _UPSTREAM_CREDIT_METADATA: Dict[str, Tuple[str, str, str]] = {
         "MIT",
         "Cross-language Rust porting patterns, semantic traps, `known-diffs.jsonl`, and Rust hardening conventions",
     ),
+    "DeadInternetStudios/100x-engineer-skill": (
+        "https://github.com/DeadInternetStudios/100x-engineer-skill",
+        "MIT",
+        "Multi-viewport DOM/layout check taxonomy (`./skills/ui-refinery/scripts/check_ui_matrix.py`)",
+    ),
 }
 
 
@@ -751,6 +760,11 @@ def render_plugin_readme(spec: PluginSpec, version: str) -> str:
             "3. Bundled scripts and stdio MCP servers require Python `3.10+` on `PATH` "
             "(on Windows, ensure `python3` or a local `python` executable is configured in `mcp_config.json`)."
         )
+    if spec.name == "ui-refinery":
+        lines.append(
+            "4. Optional live multi-viewport DOM checks (`./skills/ui-refinery/scripts/check_ui_matrix.py`) "
+            "require Python `playwright` and Chromium installed explicitly in your environment (never auto-installed)."
+        )
     if spec.name == "media-studio":
         lines.append("4. Media probing, salvage, and mastering require `ffmpeg` and `ffprobe` on `PATH`.")
     license_clause = (
@@ -797,7 +811,13 @@ def render_plugin_third_party_notices(spec: PluginSpec, root_notices_text: str) 
         found_row = next((ln for ln in lines if ln.startswith(row_prefix)), None)
         if found_row is None:
             raise ValueError(f"Root THIRD_PARTY_NOTICES.md missing attribution table row for {upstream!r}")
-        matched_rows.append(rewrite_plugin_markdown(found_row, spec.name, "THIRD_PARTY_NOTICES.md"))
+        meta = _UPSTREAM_CREDIT_METADATA.get(upstream)
+        if upstream == "DeadInternetStudios/100x-engineer-skill" and meta is not None:
+            url, lic, scope_desc = meta
+            scoped_row = f"| [{upstream}]({url}) | {lic} | {scope_desc} |"
+            matched_rows.append(rewrite_plugin_markdown(scoped_row, spec.name, "THIRD_PARTY_NOTICES.md"))
+        else:
+            matched_rows.append(rewrite_plugin_markdown(found_row, spec.name, "THIRD_PARTY_NOTICES.md"))
 
     sections_by_upstream: Dict[str, str] = {}
     idx = 0

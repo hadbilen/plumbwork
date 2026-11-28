@@ -162,4 +162,4 @@ Run these alongside the core Delivery Gate when the task is mobile or responsive
 - [ ] Do hover-only interactions have a tap equivalent with visible feedback? (R-03)
 - [ ] Does the navigation reflow into a mobile pattern (bottom nav or menu) instead of a squeezed desktop row? (R-03)
 - [ ] Do fixed nav bars (bottom nav, sticky headers) never cover content and respect safe areas? (R-03)
-- [ ] Are responsive media/container rules, fluid track widths, and `:active`/click handlers verified in code (and live mobile viewport rendering verified when available, or declared under `GEMINI.md` Rule 8)? (R-35)
+- [ ] Are responsive media/container rules, fluid track widths, and `:active`/click handlers verified in code (and live multi-viewport DOM rendering verified via `python3 ~/.gemini/config/skills/ui-refinery/scripts/check_ui_matrix.py <file_or_localhost_url>` when Playwright is installed, or declared under `GEMINI.md` Rule 8)? (R-35)

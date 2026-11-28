@@ -1680,9 +1680,9 @@ class TestW3ProcoderArchivalAndAdr0014(unittest.TestCase):
         eng.pass3_directive_collision_and_mutex()
         self.assertEqual(eng.findings, [], eng.findings)
 
-        # 3. Seed & guard/upstream fallback both carry 8 tracked_repositories without procoder
+        # 3. Seed & guard/upstream fallback both carry 9 tracked_repositories without procoder
         seed = json.loads(SEED_PATH.read_text(encoding="utf-8"))
-        self.assertEqual(len(seed["tracked_repositories"]), 8)
+        self.assertEqual(len(seed["tracked_repositories"]), 9)
         self.assertNotIn("procoder", seed["tracked_repositories"])
 
         empty_cfg = self.root / "empty_cfg"
@@ -1697,7 +1697,7 @@ class TestW3ProcoderArchivalAndAdr0014(unittest.TestCase):
         ):
             fallback = guard_upstream.UpstreamAuditorBridge(target_dir=empty_cfg).load_state()
         self.assertEqual(fallback["tracked_repositories"], seed["tracked_repositories"])
-        self.assertEqual(len(fallback["tracked_repositories"]), 8)
+        self.assertEqual(len(fallback["tracked_repositories"]), 9)
 
         # 4. Legacy 9-repo ledger reconciliation prunes retired procoder (and pending_repo_updates) while keeping custom user repos
         legacy_state = {

@@ -78,3 +78,22 @@ If a mutation would leave the test suite green, the behavior is unprotected or t
 - The test would still pass if the business logic were deleted and only the mock/framework remained.
 - The test compares live wall-clock time (`datetime.now()`, `time.time()`, `Date.now()`) against a hardcoded calendar date or fixed ISO timestamp ("time-bomb" test that flips outcome as real calendar dates advance).
 - A production method or environment branch exists solely to detect or serve the test suite (`GEMINI.md` Rule 9).
+
+## 9. Opt-In Property Ledger & Planted-Bug Red Proofs (`verify/ledger.tsv`)
+
+For critical state machines, financial arithmetic, parsers, or authorization cores, projects may track named behavioral properties in a git-tracked TSV ledger (`verify/ledger.tsv`) coupled to canonical SHA-256 digests of the covered source files (`covers_hash`) and a saved failing run (`verify/red/<id>.txt`, adapted from `DeadInternetStudios/100x-engineer-skill`, MIT):
+
+1. **Six Property Kinds:** `state`, `transition`, `precondition`, `postcondition`, `invariant`, and `liveness` (plus `waived` for non-logic files such as static copy or layout, requiring a `>= 12`-char `--why` rationale).
+2. **Planted-Bug Proof (`verify/red/<id>.txt`):** A green check that has never demonstrably failed proves nothing. Before promoting a property to `holds`, seed a realistic defect in the covered code (or a throwaway branch/copy), run the property check, save the failing output containing a `FAIL <reason>` line to `verify/red/<id>.txt`, and revert the planted defect.
+3. **Staleness & Explicit Sync:** Any edit to a covered file turns the row `stale` automatically; `ledger-run` executes commands safely (`shlex.split`, `shell=False` by default) and records `ran_hash` without silently clearing staleness. Only an explicit `ledger-sync --id <id> --note "<reason>"` promotes a passing, red-proven row on the current code hash back to `holds`.
+4. **Zero-Execution Verification:** `ledger-status` and `plumb-guard verify-invariants --property-ledger` never execute ledger commands — they verify file hashes, red-proof files, and row states read-only.
+
+```bash
+plumb-guard test-boundary ledger-add --id split-keeps-cents --kind invariant \
+  --property "Split shares always sum to total plus tip to the cent" \
+  --covers src/split.py --cmd "python3 -m unittest tests/test_split.py" --level sampled
+plumb-guard test-boundary ledger-run --id split-keeps-cents
+plumb-guard test-boundary ledger-sync --id split-keeps-cents --note "Verified against planted rounding bug"
+plumb-guard test-boundary ledger-status --dir .
+plumb-guard verify-invariants --property-ledger --path .
+```

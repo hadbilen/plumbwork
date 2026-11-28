@@ -385,7 +385,7 @@ class TestAdr0012RestrictedModelAllowlistSeam(_TempCase):
         self.assertEqual(fallback.get("approved_customization_models"), seed.get("approved_customization_models"))
         self.assertEqual(fallback.get("known_placeholder_models"), seed.get("known_placeholder_models"))
         self.assertEqual(fallback.get("tracked_repositories"), seed.get("tracked_repositories"))
-        self.assertEqual(len(seed.get("tracked_repositories", {})), 8)
+        self.assertEqual(len(seed.get("tracked_repositories", {})), 9)
 
     def test_pre_tool_use_enforces_neon_xhigh_and_carbon_high_only(self) -> None:
         seed_dest = self.fake_cfg / "skills" / "upstream-auditor"
@@ -498,7 +498,7 @@ class TestAdr0012RestrictedModelAllowlistSeam(_TempCase):
             (REPO_ROOT / "skills" / "upstream-auditor" / "upstream_state.seed.json").read_text(encoding="utf-8")
         )
         eight_repos = {k: v for k, v in seed["tracked_repositories"].items() if k != "rust-anything"}
-        self.assertEqual(len(eight_repos), 7)
+        self.assertEqual(len(eight_repos), 8)
 
         legacy_templates = [
             (

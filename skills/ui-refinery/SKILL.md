@@ -10,7 +10,7 @@ description: >-
 
 # ui-refinery
 
-> **Upstream Attribution (MIT):** Adapted from [miqdadbadjuber/anti-slop](https://github.com/miqdadbadjuber/anti-slop) (MIT License, Copyright (c) 2026 Miqdad Badjuber) and [bendrape1-byte/silk-design](https://github.com/bendrape1-byte/silk-design) (MIT License, Copyright (c) 2026 Ben Drape), modified and extended for this harness. Full license notices ship in `THIRD_PARTY_NOTICES.md`.
+> **Upstream Attribution (MIT):** Adapted from [miqdadbadjuber/anti-slop](https://github.com/miqdadbadjuber/anti-slop) (MIT License, Copyright (c) 2026 Miqdad Badjuber), [bendrape1-byte/silk-design](https://github.com/bendrape1-byte/silk-design) (MIT License, Copyright (c) 2026 Ben Drape), and [DeadInternetStudios/100x-engineer-skill](https://github.com/DeadInternetStudios/100x-engineer-skill) (MIT License, Copyright (c) 2026 Dead Internet Studios; multi-viewport DOM matrix taxonomy), modified and extended for this harness. Full license notices ship in `THIRD_PARTY_NOTICES.md`.
 
 > UI Refinery: Design, Copy, Accessibility, Motion & Comment Quality Filter
 
@@ -450,6 +450,17 @@ python3 ~/.gemini/config/skills/ui-refinery/scripts/check_ui_slop.py <file_or_di
 
 The scanner deterministically flags cloned 3+ sibling card grids (`UI-1`), nested card-in-card boxification (`UI-2`), unearned AI gradient/blur/bounce tells (`UI-3`), raw programmer-art RGB primaries in game canvases (`UI-4`), and dead anchors or no-op button stubs (`UI-5`).
 
+### Optional Live Multi-Viewport DOM Matrix (`check_ui_matrix.py`)
+
+When optional Python `playwright` (`playwright.sync_api`) is installed in the project environment, run the multi-viewport DOM/layout matrix across phone, tablet, and desktop viewports (`blank`, `overflowX`, `offscreen`, `truncated`, `spill`, `brokenImage`, `consoleErrors`, `tinyTap`, `tinyText`, `overlap`, `viewportMeta`):
+
+```bash
+python3 ~/.gemini/config/skills/ui-refinery/scripts/check_ui_matrix.py ./index.html
+python3 ~/.gemini/config/skills/ui-refinery/scripts/check_ui_matrix.py http://127.0.0.1:5173 --fail-on weak --json
+```
+
+By default, live browser requests are restricted to loopback hosts (`localhost`, `127.0.0.1`, `::1`); local HTML files are served over a hardened ephemeral `127.0.0.1` server (no directory listings, dotfiles, or symlinks). When Playwright is absent, the script exits `2` (`PLAYWRIGHT_MISSING`) without installing packages — declare live viewport inspection under `Not verified` (`GEMINI.md` Rule 8) and rely on `check_ui_slop.py` and `contrast-check.py`.
+
 ---
 
 ## Delivery Gate (Mandatory Pre-Ship Verification)
@@ -494,7 +505,7 @@ Load only the specific reference module needed for the active task:
 - **Visual Composition & HUDs (`/ui-audit`):** [references/ui.md](./references/ui.md) + `~/.gemini/config/skills/ui-refinery/scripts/check_ui_slop.py`
 - **Copywriting & De-AI Prose (`/copy-polish`):** [references/copywriting.md](./references/copywriting.md) + `~/.gemini/config/skills/ui-refinery/scripts/check_synthetic_markers.py`
 - **WCAG AA Contrast & Keyboard A11y (`/a11y-check`):** [references/human-a11y.md](./references/human-a11y.md) + `~/.gemini/config/skills/ui-refinery/scripts/contrast-check.py` & `~/.gemini/config/skills/ui-refinery/scripts/contrast-mcp.py`
-- **Mobile Overflow & Tap Targets (`/mobile-layout`):** [references/layoutmobile.md](./references/layoutmobile.md)
+- **Mobile Overflow & Tap Targets (`/mobile-layout`):** [references/layoutmobile.md](./references/layoutmobile.md) + `~/.gemini/config/skills/ui-refinery/scripts/check_ui_matrix.py` (optional Python Playwright)
 - **Code-Comment Hygiene (`/code-comments`):** [references/code-comments.md](./references/code-comments.md)
 - **Kinetic Showcase Motion — `MOTION 3` (`/motion-physics`):** [references/motion-physics.md](./references/motion-physics.md) (`references/motion-physics/assets/`, `references/motion-physics/references/`, `references/motion-physics/templates/`)
 

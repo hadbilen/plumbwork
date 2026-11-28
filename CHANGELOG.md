@@ -2,6 +2,28 @@
 
 All notable changes to Plumbwork (formerly Antigravity Harness) are documented in this file.
 
+## [3.0.2] - 2026-11-28
+Patch release delivering `ADR-0018`: opt-in file-hash-bound Property Ledger (`verify/ledger.tsv`) with planted-bug red proofs, optional Playwright multi-viewport DOM matrix checking (`skills/ui-refinery/scripts/check_ui_matrix.py`), automated blinded A/B benchmark evaluation (`scripts/benchmark_eval.py`) with cross-model judge provenance guidance, and release-only `upstream-auditor` tracking plus MIT attribution for `DeadInternetStudios/100x-engineer-skill` (`v0.1.1`), verified by `932` hermetic unit tests while preserving the `25`-subcommand `plumb-guard` CLI freeze and `guard.__all__`.
+
+### Added
+- **Opt-In Property Ledger (`ADR-0018`, `guard/property_ledger.py`, `guard/cli.py`, `guard.py`, `scripts/verify_invariants.py`, `skills/harness/references/test-design.md`, `tests/test_adr0018_property_ledger.py`):**
+  - Added stdlib `PropertyLedger` wired under `plumb-guard test-boundary ledger-{add,run,sync,status,waive}` and `scripts/verify_invariants.py --property-ledger` (plus `plumb-guard verify-invariants --property-ledger`).
+  - Tracks `verify/ledger.tsv` (`mode=0o644`) across 6 property kinds (`state`, `transition`, `precondition`, `postcondition`, `invariant`, `liveness`) plus `waived`, canonical sorted SHA-256 `covers_hash`, mandatory planted-bug red proof files (`verify/red/<id>.txt` matching `^FAIL\s+\S`), exclusive cross-platform lockfile (`verify/.ledger.lock`), default non-shell execution blocking shell control operators/interpreters/`.bat`/`.cmd` unless `--allow-shell`, process-group timeouts, bounded 64 KiB tail capture, and zero-execution read-only CI verification.
+- **Optional Playwright Multi-Viewport DOM Matrix (`skills/ui-refinery/scripts/check_ui_matrix.py`, `install.py`, `installers/build_binaries.py`, `guard/plugins.py`, `skills/ui-refinery/`, `tests/test_adr0018_ui_matrix.py`):**
+  - Added standalone Python stdlib 11-check DOM matrix evaluator (`blank`, `overflowX`, `offscreen`, `truncated`, `spill`, `brokenImage`, `consoleErrors`, `tinyTap`, `tinyText`, `overlap`, `viewportMeta`) with offline `--from-json` mode and optional `playwright.sync_api` live capture across 5 default viewports (exits `2` with `PLAYWRIGHT_MISSING` when absent; never auto-installs packages).
+  - Hardened with `context.route("**/*", ...)`, WebSocket blocking (`route_web_socket`), `service_workers="block"`, `porter/net.py`-parity IPv4/IPv6 SSRF validation, pinned-socket remote HTTP/HTTPS fulfillment re-validating every 3xx redirect hop under `--allow-remote`, and a per-session-token + `Host`-verified `dir_fd` ephemeral `127.0.0.1:0` server for local HTML files.
+  - Bundled into `install.py`, `installers/build_binaries.py`, and the standalone `ui-refinery` Antigravity Plugin Pack.
+- **Automated Blinded A/B Benchmark Evaluator & Cross-Model Guidance (`scripts/benchmark_eval.py`, `docs/benchmark-protocol.md`, `skills/harness/references/multi-agent-orchestration.md`, `tests/test_adr0018_benchmark_eval_and_upstream.py`):**
+  - Added stdlib `scripts/benchmark_eval.py` (`init`, `pair`, `score`) preserving the existing `docs/benchmark-protocol.md` heredoc verbatim.
+  - Seals `seed` and `builder_model` inside `0o600` `.private/key.json`, derives slot polarity via keyed HMAC, binds distinct per-order `o1`/`o2` tokens to submission SHA-256 digests, strips harness ledgers (`tasks.md`, `HANDOFF.md`, `walkthrough.md`, `MISTAKES.md`), runs path+byte leak scans, computes exact two-sided binomial sign-test `p`-values and Wilson 95% confidence intervals with order-flip filtering, and fails closed under `--require-cross-model` on same-family or missing model provenance.
+- **Upstream Release Tracking & MIT Attribution (`DeadInternetStudios/100x-engineer-skill`, `v0.1.1`):**
+  - Registered `100x-engineer-skill` (`track: "release"`, `v0.1.1`) as the 9th tracked repository across `skills/upstream-auditor/upstream_state.seed.json`, `guard/upstream.py`, `skills/upstream-auditor/SKILL.md`, and `skills/upstream-auditor/scripts/check_skills.sh`.
+  - Added verbatim MIT notice to `THIRD_PARTY_NOTICES.md`, pack-scoped credit in `guard/plugins.py`, `README.md`, `skills/ui-refinery/SKILL.md`, `docs/adr/0018-property-ledger-ui-matrix-blind-benchmark-and-100x-tracking.md`, `docs/adr/README.md`, and `.github/workflows/ci.yml` `trusted-boundary`.
+
+### Changed
+- **Synchronized Release Version (`3.0.2`):**
+  - Bumped synchronized release version to `3.0.2` across `guard/__init__.py`, `porter/__init__.py`, `installers/packaging/PKGBUILD`, `README.md`, `CHANGELOG.md`, and `.harness/manifest.json`, and updated operator-authorized version assertions in `tests/test_hybrid_plugins.py`.
+
 ## [3.0.1] - 2026-11-28
 Patch release consolidating `PreToolUse` `_LazyRegex` shell-guard prefiltering (#1), canonical `tozhax/plumbwork` metadata synchronization, Porter Rule 9 CI guidance, and the `2026-11-28` upstream skills and platform audit (`ui-refinery`, `rustify` `v5.0.2`, Antigravity `conversations` built-in skill, and `rea-agents-6.10.1` ledger sync), verified by `918` hermetic unit tests.
 

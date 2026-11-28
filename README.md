@@ -6,7 +6,7 @@
   <img alt="Plumbwork: behavioral constitution, auditor subagents, Porter transpiler, and Plumb Guard" src="docs/assets/plumbwork-header-light.svg" width="596">
 </picture>
 
-[![Release](https://img.shields.io/badge/release-v3.0.1-blue.svg)](https://github.com/tozhax/plumbwork/releases)
+[![Release](https://img.shields.io/badge/release-v3.0.2-blue.svg)](https://github.com/tozhax/plumbwork/releases)
 [![CI](https://github.com/tozhax/plumbwork/actions/workflows/ci.yml/badge.svg)](https://github.com/tozhax/plumbwork/actions/workflows/ci.yml)
 [![Runtime](https://img.shields.io/badge/core%20runtime-Python%20stdlib%20only-brightgreen.svg)](#dependencies)
 [![Design Standard](https://img.shields.io/badge/UI-WCAG%20AA%20%7C%20ui--refinery-orange.svg)](DESIGN.md)
@@ -181,7 +181,7 @@ one is not stopped; the integrity baseline reports it.
   * **`PreInvocation` (`pre_invocation.py`):** calibrated bilingual (`EN` / `TR`) skill, subagent, MCP server (`rea_rea`, `ui-refinery-contrast` / `ui-refinery_contrast`), and plugin auto-routing via native `systemMessage` (`ADR-0005`, `ADR-0006`, `ADR-0011`, `ADR-0015`, `ADR-0016`) emitting installed-layout-safe paths (`~/.gemini/config/...` or `~/.gemini/config/plugins/<pack>/...`), live `config.json["plugins"][<pack>]["enabled"]` toggle awareness suppressing disabled or removed harness packs, explicit `/slash` priority, pasted-review and read-only meta-question false-positive suppression, tiered hint saturation, bounded workspace & `transcriptPath` tail streaming, interrupted-session `[Harness Recovery & Continuity Gate]` (with `marathon` `Campaign ID` isolation and stale-ledger anti-merge guidance), dynamic predictive context-window handoff advisories (post-`CHECKPOINT` active token headroom vs. incoming job cost without fixed `%` cutoffs, delivering Tier-1 `0`-token `user_markdown` and one-time Tier-2 latched `systemMessage` per `ADR-0014`), and transcript-aware mid-turn / reactive-wakeup silence plus true-consecutive `build-error-resolver` filtering (`ADR-0009`, `ADR-0010`).
   * **`PreToolUse` (`pre_tool_use.py`, `_shell_guard.py`, `_swarm_guard.py`, `_mcp_guard.py`, `_write_guard.py`, `_workflow_ast.py`):** Governance Shield (unconditional `deny` on `~/.gemini/config` governance seams, `~/.gemini/{GEMINI,AGENTS}.md`, `plugins/` root/dot/glob patterns, and all paths inside harness plugin packs while preserving third-party plugins, including unified `ast.parse` pure read-only Python inline/heredoc verification per `ADR-0010` and `ADR-0016`), Top-Catalog Model & Highest-Effort Customization Gate (Rule 17, scoped strictly to `plumbwork` checkouts so external user projects can edit their own `AGENTS.md`/`GEMINI.md`/`SKILL.md` on any model, with `known_placeholder_models` diagnostics, fail-closed `MODEL_PLACEHOLDER_*` escalation, and `swarm`, `define_subagent`, `post_message`, `send_message`, `schedule`, and `run_workflow` AST checks per `ADR-0005`, `ADR-0007`, & `ADR-0010`), `GEMINI.md` Rule 9 `tasks.md` `## Authorized Test Modifications` gating (with standardized 3-sentence plain-language operator headers *What changes / If approved / If denied* across all `force_ask` prompts plus exact test path(s) and diff summaries per `ADR-0015`, while permitting clean `[COMPLETE]` stale-campaign resets once prior authorized tests are committed), `force_ask` gating on directory drops (`cp -r`, `rsync`, `git clone`, `mv`, cwd `tar -x`/`unzip`) into `~/.gemini/config/plugins/<any>`, all `agy plugin (install|import)` commands, and `agy plugin (disable|uninstall)` commands targeting harness packs (third-party `disable`/`uninstall` exempt), tiered MCP execution gating (`ADR-0004`), and command-boundary Bash Guard.
   * **`Stop` (`stop_gate.py`):** diff, untracked-file, and linked-worktree `TestBoundaryGuard` integrity verification (tautological assertions, operator/matcher relaxation, `C9` test-runner sniffing, unapproved test skips, malformed `.json`/`.toml`/`.svg` syntax, `UI-1`–`UI-5` slop, and broken local Markdown links) guarded by a 3-strike circuit breaker.
-* **Upstream watchdog (`skills/upstream-auditor/scripts/upstream_watcher.py`):** the `SessionStart` hook monitors model drift, `builtin/skills` SHA-256, `~/.gemini/antigravity/builtin/.checksum` bundle drift (`ADR-0014`), and 8 tracked external repositories, sending an operator-only notice once per change (a desktop notification plus `metadata.user_markdown` on `systemMessage` with an empty `systemMessage` body so the operator sees it without injecting maintenance text into the agent prompt); `plumb-guard upstream ack` (or `upstream_watcher.py --ack`) silences it until something changes again, and `plumb-guard upstream status` (or `upstream_watcher.py --status`) shows the current reasons. Network checks have a hard deadline.
+* **Upstream watchdog (`skills/upstream-auditor/scripts/upstream_watcher.py`):** the `SessionStart` hook monitors model drift, `builtin/skills` SHA-256, `~/.gemini/antigravity/builtin/.checksum` bundle drift (`ADR-0014`), and 9 tracked external repositories, sending an operator-only notice once per change (a desktop notification plus `metadata.user_markdown` on `systemMessage` with an empty `systemMessage` body so the operator sees it without injecting maintenance text into the agent prompt); `plumb-guard upstream ack` (or `upstream_watcher.py --ack`) silences it until something changes again, and `plumb-guard upstream status` (or `upstream_watcher.py --status`) shows the current reasons. Network checks have a hard deadline.
 
 ---
 
@@ -287,10 +287,10 @@ boilerplate is deduplicated across `agents/*.md` and injected standalone during 
 * **`deep-grill`:** Socratic trade-off interviewer: product and business-rule boundaries first,
   `[NEEDS CLARIFICATION: ...]` parking, paraphrase check-ins, a decision ledger ending in exit criteria.
 * **`chisle`:** terse, zero-fluff development mode with YAGNI/ladder-first code discipline (never bypasses verification gates or locked acceptance criteria).
-* **`ui-refinery`:** core 40-rule UI/copy filter + structural UI scanner (`check_ui_slop.py`), bundling on-demand reference modules and tools for UI geometry (`/ui-audit`), code-comment hygiene (`/code-comments`), prose scanning (`/copy-polish` + `check_synthetic_markers.py` for English and Turkish), WCAG contrast (`/a11y-check` + `contrast-check.py` / `contrast-mcp.py`), mobile layout (`/mobile-layout`), and kinetic motion (`/motion-physics`).
+* **`ui-refinery`:** core 40-rule UI/copy filter + structural UI scanner (`check_ui_slop.py`) + optional Playwright multi-viewport DOM matrix (`check_ui_matrix.py`), bundling on-demand reference modules and tools for UI geometry (`/ui-audit`), code-comment hygiene (`/code-comments`), prose scanning (`/copy-polish` + `check_synthetic_markers.py` for English and Turkish), WCAG contrast (`/a11y-check` + `contrast-check.py` / `contrast-mcp.py`), mobile layout (`/mobile-layout`), and kinetic motion (`/motion-physics`).
 * **`technical-writing`:** Diataxis documentation, executable example verification, and `/visualizer` diagramming (`skills/technical-writing/references/visualizer.md`; Mermaid or built-in `generative_ui`).
 * **`audit`:** read-only structural, consistency, and security boundary audit engine (with automatic `REPOSTATE.md`, `ARCHITECTURE.md`, and `SECURITY_POSTURE.md` Phase 0.B control grounding per `ADR-0011` and `ADR-0012`), bundling `/security-review` pre-deployment and cloud-infrastructure checklists (`skills/audit/references/security-review.md`).
-* **`upstream-auditor`:** model catalog, built-in Antigravity runtime (`builtin/skills` + `builtin/.checksum`), and 8-repository upstream drift auditor (supporting branch commits, consolidated sub-reference targets, and `"track": "release"` tag tracking such as `morluto/rea` and `erkamyaman/rust-anything`).
+* **`upstream-auditor`:** model catalog, built-in Antigravity runtime (`builtin/skills` + `builtin/.checksum`), and 9-repository upstream drift auditor (supporting branch commits, consolidated sub-reference targets, and `"track": "release"` tag tracking such as `morluto/rea`, `erkamyaman/rust-anything`, and `DeadInternetStudios/100x-engineer-skill`).
 * **`refactoring`**, **`retro`**, **`data-analysis`**, **`diagnosing-bugs`**, **`database-migrations`**.
 
 Third-party origins and licenses are listed in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
@@ -327,26 +327,27 @@ plumbwork/
 ├── .github/workflows/ci.yml               # 3 OS x Python 3.10-3.14, lint, trusted-boundary, release
 ├── .harness/manifest.json                 # Canonical manifest (checked by CI)
 ├── docs/
-│   ├── adr/                               # Architecture Decision Records (ADR-0001 through ADR-0017)
+│   ├── adr/                               # Architecture Decision Records (ADR-0001 through ADR-0018)
 │   ├── assets/                            # Dual-theme SVG header graphics for README.md
 │   └── benchmark-protocol.md              # 10-task real-project A/B quality benchmark & PreInvocation evaluation record
 ├── bin/                                   # plumb-guard launchers (POSIX, .bat, .ps1)
 ├── installers/                            # PyInstaller build, Linux packages (.deb/.rpm/Arch), desktop entry
 ├── guard/                                 # Guard: os_adapter, environment, integrity, snapshot, lease,
 │   │                                      #   notifier, approval, audit_log, doctor, paths, startup,
-│   │                                      #   test_boundary, provenance, porter_bridge, upstream, plugins, cli, gui, tray
+│   │                                      #   test_boundary, property_ledger, provenance, porter_bridge, upstream, plugins, cli, gui, tray
 │   ├── plugin_assets/                     #   4 dual-theme 128x128 SVG logos for standalone plugin packs
 │   ├── agy_hooks.py                       #   lazy CLI router & PEP 562 compatibility facade (ADR-0008, ADR-0010, ADR-0013, ADR-0015)
 │   └── hooks/                             #   event- & tool-scoped lifecycle hooks: common, pre_invocation, pre_tool_use, _shell_guard, _swarm_guard, _mcp_guard, _write_guard, _workflow_ast, stop_gate
 ├── porter/                                # analyzer, sanitizer, frontmatter, manifest, net, archive, emitters/
 ├── scripts/
+│   ├── benchmark_eval.py                  # Blinded A/B pair generator, leak scanner, HMAC seal & sign-test scorer
 │   ├── build_plugins.py                   # Standalone Antigravity plugin pack builder, archiver & validator
 │   ├── code_map.py                        # AST caller/dataflow/blast-radius map, runtime tracer & FTS5 search
 │   ├── meta_audit.py                      # 7-pass harness self-audit (Rule 17)
-│   └── verify_invariants.py               # Deterministic invariant scan
+│   └── verify_invariants.py               # Deterministic invariant & property-ledger scan
 ├── agents/                                # 10 auditor subagent definitions
 ├── skills/                                # 20 top-level skills + on-demand references/ & scripts/
-├── tests/                                 # Hermetic unittest suite (918 tests)
+├── tests/                                 # Hermetic unittest suite (932 tests)
 └── templates/                             # ARCHITECTURE, DECISIONS, HANDOFF, MISTAKES, REPOSTATE, SECURITY_POSTURE, procoder.SKILL, vulkan.SKILL & config templates
 ```
 
@@ -404,7 +405,7 @@ Each release publishes 4 standalone-clean plugin packs (`.zip` + `.zip.sha256`) 
 
 | Pack (`dir`) | Display Name | Bundled Skills & Extras |
 | :--- | :--- | :--- |
-| `ui-refinery` | **UI Refinery** | `ui-refinery`, `vibecoder`, `DESIGN.md`, `contrast-mcp.py` (`ui-refinery_contrast` MCP) |
+| `ui-refinery` | **UI Refinery** | `ui-refinery`, `vibecoder`, `DESIGN.md`, `contrast-mcp.py` (`ui-refinery_contrast` MCP), `check_ui_matrix.py` (optional Playwright DOM matrix) |
 | `rust-suite` | **Rust Suite** | `rustify`, `rust-harden`, `vulkan.SKILL.template.md` |
 | `media-studio` | **Media Studio** | `media-studio`, `media_qc.py` (requires `ffmpeg`/`ffprobe` on `PATH`) |
 | `game-engineering` | **Game Engineering** | `game-engineering` |
@@ -413,8 +414,8 @@ To install a standalone pack from GitHub Releases (or build all 4 locally from s
 
 ```bash
 # Verify checksum and extract into global ~/.gemini/config/plugins/ (or project .agents/plugins/)
-sha256sum -c ui-refinery-v3.0.1.zip.sha256
-unzip ui-refinery-v3.0.1.zip -d ~/.gemini/config/plugins/
+sha256sum -c ui-refinery-v3.0.2.zip.sha256
+unzip ui-refinery-v3.0.2.zip -d ~/.gemini/config/plugins/
 
 # Build, archive, and offline-validate all 4 standalone packs from a source checkout
 python3 scripts/build_plugins.py --out dist/plugins --validate --zip
@@ -434,8 +435,8 @@ Release assets (see [GitHub Releases](https://github.com/tozhax/plumbwork/releas
 `.sha256` file each (including standalone plugin pack `.zip` archives); verify before installing:
 
 ```bash
-sha256sum -c plumb-guard_3.0.1_amd64.deb.sha256
-sudo apt install ./plumb-guard_3.0.1_amd64.deb
+sha256sum -c plumb-guard_3.0.2_amd64.deb.sha256
+sudo apt install ./plumb-guard_3.0.2_amd64.deb
 plumb-guard init              # bootstrap ~/.gemini/config, hooks, FIM baseline & lock from /usr/share/plumbwork (add --plugins for Hybrid Layout)
 ```
 
@@ -484,11 +485,12 @@ plumb-guard env list
 plumb-guard env policy <env_id> monitored # built-in global 'antigravity' always reloads as 'enforced'
 plumb-guard drift
 
-# Test trust boundary and reproducibility
+# Test trust boundary, opt-in property ledger, and reproducibility
 plumb-guard test-boundary snapshot
 plumb-guard test-boundary verify --mode tdd
 plumb-guard test-boundary verify --base-ref origin/main
 plumb-guard test-boundary run-reproducible --cmd "pytest tests/test_core.py" --passes 2
+plumb-guard test-boundary ledger-status --dir . --allow-missing
 plumb-guard provenance generate
 
 # Portable workspace verification tools (work from any external project cwd)
@@ -496,6 +498,7 @@ plumb-guard code-map callers handle_request src/
 plumb-guard ui-slop index.html --mode utility
 plumb-guard synthetic-markers --profile technical README.md
 plumb-guard verify-invariants --all
+plumb-guard verify-invariants --property-ledger --path .
 
 # Boot sentinel, notifications, self-audit, GUI
 plumb-guard startup enable
@@ -561,7 +564,7 @@ existing tests were only extended, never weakened. Workflow runs for pull reques
 maintainer's approval, and their result is advisory (see [`CONTRIBUTING.md`](CONTRIBUTING.md)).
 
 ```bash
-# Hermetic unit test suite (918 tests)
+# Hermetic unit test suite (932 tests)
 python3 -m unittest discover -s tests -v
 
 # Harness self-audit (Rule 17); --strict also fails on warnings
@@ -582,6 +585,7 @@ python3 scripts/build_plugins.py --out /tmp/plumbwork-plugins-smoke --validate -
 The Guard, Porter and grader code uses only the Python standard library (3.10+). Optional extras: `tkinter`
 for the GUI, `pystray` + `Pillow` or PyGObject/AppIndicator for the tray icon, PyYAML (used alongside Porter's
 frontmatter parser by the self-audit when present), `nodejs (>= 18)` (for `skills/harness/references/unlazy/scripts/*.mjs` gate and dispatch helpers),
+`playwright` + Chromium (optional Python package for live multi-viewport DOM capture in `skills/ui-refinery/scripts/check_ui_matrix.py`; never auto-installed),
 and `ffmpeg` (`>= 5.1` recommended; automatic `-vsync` fallback on older builds) / `ffprobe` (for `media-studio` `media_qc.py` signal and container verification). The standalone binaries bundle `pystray` and `Pillow` via PyInstaller.
 
 ---
@@ -597,7 +601,7 @@ and `ffmpeg` (`>= 5.1` recommended; automatic `-vsync` fallback on older builds)
   * Always-on constitutional rules (`rules/plumbwork-constitution.md`), matched `SKILL.md` reads, and `PreInvocation` routing hints add prompt context on active turns (the A/B benchmark in [`docs/benchmark-protocol.md`](docs/benchmark-protocol.md) budgets `<= +25%` median token overhead on Tier 1 and Tier 2 tasks).
   * Multi-step planning (`deep-grill`, `tasks.md`, ADRs) and `Stop` gate retry loops add extra turns when a check fails.
   * **Tier 3 auditor fan-out is the largest multiplier:** each read-only auditor starts in a fresh context (~10-15K input tokens plus the diff slice) on the parent model by default (`Model: "inherit"`), so running the full pre-flight auditor set scales input cost with diff size (see [`skills/harness/references/multi-agent-orchestration.md`](skills/harness/references/multi-agent-orchestration.md)).
-* **What uses zero LLM tokens:** `plumb-guard` locking, integrity verification, snapshots, `upstream` checks, `meta_audit.py`, `verify_invariants.py`, `code-map`, `ui-slop`, and `synthetic-markers` all run locally in Python with no model calls.
+* **What uses zero LLM tokens:** `plumb-guard` locking, integrity verification, snapshots, `upstream` checks, `test-boundary ledger-*`, `meta_audit.py`, `verify_invariants.py`, `benchmark_eval.py`, `code-map`, `ui-slop`, `check_ui_matrix.py`, and `synthetic-markers` all run locally in Python with no model calls.
 * **How to keep quota usage down:**
   * Keep small, localized fixes in **Tier 1** (`1-2` files, `<20` lines), which runs direct edits and checks with no planning artifacts or auditor fan-out.
   * For heavy documentation reading (`research`) or opt-in read-only triage where lower cost matters more than deep review, use `Model: "flash"` or `"pro"` while keeping flagship models on security, consistency, and governance checks.
@@ -612,7 +616,7 @@ Grounded in prompt-failure post-mortems from [r/ChatGPTCoding](https://www.reddi
 [r/ClaudeAI](https://www.reddit.com/r/ClaudeAI/) and [r/LocalLLaMA](https://www.reddit.com/r/LocalLLaMA/),
 and on these open-source projects (licenses in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)):
 `miqdadbadjuber/anti-slop`, `JayPokale/Chisle`, `Leonxlnx/unlazy`, `azrtydxb/procoder`,
-`bendrape1-byte/silk-design`, `affaan-m/everything-claude-code`, `mattpocock/skills`, `erkamyaman/rust-anything`.
+`bendrape1-byte/silk-design`, `affaan-m/everything-claude-code`, `mattpocock/skills`, `erkamyaman/rust-anything`, `DeadInternetStudios/100x-engineer-skill`.
 
 ---
 

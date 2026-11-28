@@ -25,6 +25,7 @@ licenses require. Adapted files may have been modified for this harness.
 | [garrytan/gstack](https://github.com/garrytan/gstack) | MIT | `test-adequacy-auditor` (negative assertion check & branch tree), `harness` (helper reuse threshold) |
 | [karpathy/autoresearch](https://github.com/karpathy/autoresearch) & [karpathy/llm-council](https://github.com/karpathy/llm-council) | MIT | `diagnosing-bugs` (Simplicity Criterion & experiment ledger), `harness` (anonymized auditor evaluation) |
 | [erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything) | MIT | `rustify` (multi-language porting patterns, `--end-state`, `--batch`/`FnIndex`, semantic traps, noise taxonomy, `known-diffs.jsonl`, strangler cutover), `rust-harden` (`#[expect(..., reason = "...")]`, `// INFALLIBLE:`) |
+| [DeadInternetStudios/100x-engineer-skill](https://github.com/DeadInternetStudios/100x-engineer-skill) | MIT | `ui-refinery` (`skills/ui-refinery/scripts/check_ui_matrix.py` multi-viewport DOM matrix check taxonomy), `harness` (opt-in property ledger with planted-bug red proofs, blinded A/B benchmark evaluation & cross-model self-review concepts) |
 
 ## miqdadbadjuber/anti-slop (MIT)
 
@@ -597,3 +598,29 @@ SOFTWARE.
 ```
 
 
+
+## DeadInternetStudios/100x-engineer-skill (MIT)
+
+```text
+MIT License
+
+Copyright (c) 2026 Dead Internet Studios
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

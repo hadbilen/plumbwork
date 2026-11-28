@@ -192,7 +192,7 @@ jobs:
           git worktree add --detach "$trusted" "$base_sha"
           git worktree add --detach "$RUNNER_TEMP/pristine-base" "$base_sha"
           for p in guard porter guard.py porter.py skills agents templates installers bin \
-                   GEMINI.md DESIGN.md MISTAKES.md README.md CHANGELOG.md hooks.json .harness; do
+                   GEMINI.md DESIGN.md MISTAKES.md README.md CHANGELOG.md THIRD_PARTY_NOTICES.md hooks.json .harness; do
             rm -rf "${trusted:?}/$p"
             if [ -e "$p" ]; then cp -R "$p" "$trusted/$p"; fi
           done
